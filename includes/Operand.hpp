@@ -1,13 +1,21 @@
 #pragma once
 
-#warning this class must be a template
-class Operand {
-	public:
-		Operand();
-		Operand(Operand const &src);
-		virtual ~Operand();
+#include <unistd.h>
+#include "IOperand.hpp"
 
-		Operand &operator=(Operand const &rhs);
+template<typename T>
+class Operand : public IOperand {
+	public:
+		Operand() {}
+		Operand(Operand const &src) { *this = src; }
+		virtual ~Operand() {}
+
+		Operand &operator=(Operand const &rhs) {
+			if (this != &rhs) {}
+			return *this;
+		}
 	protected:
 	private:
 };
+
+typedef OperandInt8 Operand<int8_t>;

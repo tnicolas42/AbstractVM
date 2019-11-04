@@ -9,11 +9,10 @@ INC_DIR		= includes
 
 SRC =	main.cpp \
 		Avm.cpp \
-		Operand.cpp
 
 HEAD =	Avm.hpp \
 		IOperand.hpp \
-		Operand.hpp
+		Operand.hpp \
 
 CC = g++
 DEBUG_FLAGS = -g3 -fsanitize=address

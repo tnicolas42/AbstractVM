@@ -11,9 +11,7 @@ Avm::~Avm() {
 }
 
 Avm &Avm::operator=(Avm const &rhs) {
-	if (this != &rhs) {
-		;
-	}
+	// if (this != &rhs) {}
 	return *this;
 }
 
