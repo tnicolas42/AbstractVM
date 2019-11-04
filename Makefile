@@ -77,4 +77,9 @@ exec:
 	@./$(NAME) $(ARGS)
 	@printf $(MAGENTA)$(BOLD)"--------------------\n"$(NORMAL)
 
-.PHONY: all clean fclean re exec
+lint:
+	@printf $(MAGENTA)$(BOLD)"LINTER ON $(PROJECT_NAME)\n--------------------\n"$(NORMAL)
+	@$(CPPLINT) $(HEADS) $(addprefix $(SRCS_DIR)/, $(SRCS))
+	@printf $(MAGENTA)$(BOLD)"--------------------\n"$(NORMAL)
+
+.PHONY: all clean fclean re exec lint
