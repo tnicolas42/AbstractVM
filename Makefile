@@ -10,15 +10,17 @@ INC_DIR		= includes
 SRC =	main.cpp \
 		Avm.cpp \
 		IOperand.cpp \
+		Exceptions.cpp \
 
 HEAD =	Avm.hpp \
 		IOperand.hpp \
 		Operand.hpp \
+		Exceptions.hpp \
 
 CC = g++
 DEBUG_FLAGS = -g3 -fsanitize=address
 LIBS_FLAGS	=
-CFLAGS		= -Ofast -Wall -Wextra -Weverything #-Werror
+CFLAGS		= -Ofast -Wall -Wextra #-Werror
 
 HEADS	= $(addprefix $(INC_DIR)/, $(HEAD))
 OBJS	= $(addprefix $(OBJS_DIR)/, $(SRC:.cpp=.o))
@@ -84,8 +86,8 @@ lint:
 	@printf $(BLUE)$(BOLD)"--------------------\n"$(NORMAL)
 
 check:
-	@make fclean
-	@make lint
-	@make exec
+	@make fclean ; true
+	@make lint ; true
+	@make exec ; true
 
 .PHONY: all clean fclean re exec lint check
