@@ -11,8 +11,7 @@ Avm::~Avm() {
 }
 
 Avm &Avm::operator=(Avm const &rhs) {
+	(void)rhs;
 	// if (this != &rhs) {}
 	return *this;
 }
-
-#warning need to add a factory to implement add operator

@@ -9,6 +9,7 @@ INC_DIR		= includes
 
 SRC =	main.cpp \
 		Avm.cpp \
+		IOperand.cpp \
 
 HEAD =	Avm.hpp \
 		IOperand.hpp \
@@ -78,8 +79,13 @@ exec:
 	@printf $(MAGENTA)$(BOLD)"--------------------\n"$(NORMAL)
 
 lint:
-	@printf $(MAGENTA)$(BOLD)"LINTER ON $(PROJECT_NAME)\n--------------------\n"$(NORMAL)
+	@printf $(BLUE)$(BOLD)"LINTER ON $(PROJECT_NAME)\n--------------------\n"$(NORMAL)
 	@$(CPPLINT) $(HEADS) $(addprefix $(SRCS_DIR)/, $(SRCS))
-	@printf $(MAGENTA)$(BOLD)"--------------------\n"$(NORMAL)
+	@printf $(BLUE)$(BOLD)"--------------------\n"$(NORMAL)
 
-.PHONY: all clean fclean re exec lint
+check:
+	@make fclean
+	@make lint
+	@make exec
+
+.PHONY: all clean fclean re exec lint check
