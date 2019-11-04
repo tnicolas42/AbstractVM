@@ -11,7 +11,7 @@ class Operand : public IOperand {
 		virtual ~Operand() {}
 
 		Operand &operator=(Operand const &rhs) {
-			if (this != &rhs) {}
+			// if (this != &rhs) {}
 			return *this;
 		}
 	protected:
