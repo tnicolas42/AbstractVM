@@ -89,7 +89,7 @@ lint:
 	@if [ "$(CPPLINT)" = "" ]; then\
 		printf $(RED)$(BOLD)"Error:"$(NORMAL)" env var CPPLINT is not set\n"; \
 	else \
-		$(CPPLINT) $(HEADS) $(addprefix $(SRCS_DIR)/, $(SRCS)); \
+		$(CPPLINT) $(HEADS) $(addprefix $(SRCS_DIR)/, $(SRC)); \
     fi
 	@printf $(BLUE)$(BOLD)"--------------------\n"$(NORMAL)
 
