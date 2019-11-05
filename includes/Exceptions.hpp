@@ -12,3 +12,8 @@ class ConvertError : public AvmError {
 	public:
 		virtual char const * what() const throw();
 };
+
+class OverflowError : public AvmError {
+	public:
+		virtual char const * what() const throw();
+};

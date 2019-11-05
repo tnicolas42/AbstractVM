@@ -6,3 +6,6 @@ char const * AvmError::what() const throw() {
 char const * ConvertError::what() const throw() {
 	return "conversion error";
 }
+char const * OverflowError::what() const throw() {
+	return "overflow";
+}

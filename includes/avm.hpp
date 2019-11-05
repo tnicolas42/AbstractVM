@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <regex>
 #include "Operand.hpp"
 
 class Avm {
@@ -20,4 +21,6 @@ class Avm {
 
 	protected:
 	private:
+		static std::regex regexFloat;
+		static std::regex regexInt;
 };
