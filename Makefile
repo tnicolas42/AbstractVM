@@ -74,20 +74,41 @@ fclean: clean
 re: fclean
 	@make
 
-exec:
+exec-nolint:
 	@make
 	@printf $(MAGENTA)$(BOLD)"EXEC $(PROJECT_NAME)\n--------------------\n"$(NORMAL)
 	@./$(NAME) $(ARGS)
 	@printf $(MAGENTA)$(BOLD)"--------------------\n"$(NORMAL)
 
+exec:
+	@make lint ; true
+	@make exec-nolint ; true
+
 lint:
 	@printf $(BLUE)$(BOLD)"LINTER ON $(PROJECT_NAME)\n--------------------\n"$(NORMAL)
-	@$(CPPLINT) $(HEADS) $(addprefix $(SRCS_DIR)/, $(SRCS))
+	@if [ "$(CPPLINT)" = "" ]; then\
+		printf $(RED)$(BOLD)"Error:"$(NORMAL)" env var CPPLINT is not set\n"; \
+	else \
+		$(CPPLINT) $(HEADS) $(addprefix $(SRCS_DIR)/, $(SRCS)); \
+    fi
 	@printf $(BLUE)$(BOLD)"--------------------\n"$(NORMAL)
 
 check:
-	@make fclean ; true
-	@make lint ; true
-	@make exec ; true
+	@make fclean
+	@make lint
+	@make exec-nolint
 
-.PHONY: all clean fclean re exec lint check
+help:
+	@printf $(YELLOW)$(BOLD)"HELP\n--------------------\n"$(NORMAL)
+	@printf $(NORMAL)"-> make "$(BOLD)"all"$(NORMAL)": build the project and create $(NAME)\n"
+	@printf $(NORMAL)"-> make "$(BOLD)"clean"$(NORMAL)": remove all .o files\n"
+	@printf $(NORMAL)"-> make "$(BOLD)"fclean"$(NORMAL)": make clean and remove executable\n"
+	@printf $(NORMAL)"-> make "$(BOLD)"re"$(NORMAL)": make fclean and make all\n"
+	@printf $(NORMAL)"-> make "$(BOLD)"lint"$(NORMAL)": exec linter on project (use env var CPPLINT)\n"
+	@printf $(NORMAL)"-> make "$(BOLD)"exec"$(NORMAL)": make lint, make all and exec the program with ARGS='$(ARGS)'\n"
+	@printf $(NORMAL)"-> make "$(BOLD)"exec-nolint"$(NORMAL)": make all and exec the program with ARGS='$(ARGS)'\n"
+	@printf $(NORMAL)"-> make "$(BOLD)"check"$(NORMAL)": make fclean, make lint, make exec-nolint -> stop if there is an error\n"
+	@printf $(NORMAL)"-> make "$(BOLD)"help"$(NORMAL)": show the help\n"
+	@printf $(YELLOW)$(BOLD)"--------------------\n"$(NORMAL)
+
+.PHONY: all clean fclean re exec-nolint exec lint check help
