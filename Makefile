@@ -22,7 +22,7 @@ HEAD =	Avm.hpp \
 CC = g++
 DEBUG_FLAGS = -g3 -fsanitize=address
 LIBS_FLAGS	=
-CFLAGS		= -Ofast -Wall -Wextra #-Werror
+CFLAGS		= -Ofast -std=c++11 -Wall -Wextra #-Werror
 
 HEADS	= $(addprefix $(INC_DIR)/, $(HEAD))
 OBJS	= $(addprefix $(OBJS_DIR)/, $(SRC:.cpp=.o))

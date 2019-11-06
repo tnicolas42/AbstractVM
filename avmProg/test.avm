@@ -1,0 +1,7 @@
+; ok c'est un test
+
+push Int8(123)
+
+dump
+
+exit

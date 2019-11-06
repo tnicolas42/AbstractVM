@@ -22,6 +22,14 @@ void Avm::saveInstr(Instruction const &instr) {
 	_listInstr.push(instr);
 }
 
+void Avm::clearInstr() {
+	_listInstr.empty();
+}
+
+void Avm::exec() {
+	std::cout << "exec function todo" << std::endl;
+}
+
 IOperand const * Avm::createInt8(std::string const & value) {
 	if (std::regex_match(value, _regexInt) == false)
 		throw ConvertError();

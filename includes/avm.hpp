@@ -5,6 +5,8 @@
 #include <queue>
 #include "Operand.hpp"
 
+#define WHITESPACE "\t "
+
 enum eInstr {
 	InstrPush,
 	InstrPop,
@@ -39,6 +41,8 @@ class Avm {
 		};
 
 		void saveInstr(Instruction const &instr);
+		void clearInstr();
+		void exec();
 
 		/* factory to create operand */
 		static IOperand const * createInt8(std::string const & value);

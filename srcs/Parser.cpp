@@ -3,7 +3,10 @@
 #include <algorithm>
 #include "Parser.hpp"
 
-Parser::Parser(Avm const & avm) : _avm(avm) {
+Parser::Parser(Avm const & avm) :
+recvExecCommand(false),
+_errors(),
+_avm(avm) {
 }
 
 Parser::Parser(Parser const &src) :
@@ -15,8 +18,10 @@ Parser::~Parser() {
 }
 
 Parser &Parser::operator=(Parser const &rhs) {
-	(void)rhs;
-	// if (this != &rhs) {}
+	if (this != &rhs) {
+		_errors = rhs.getErrors();
+		recvExecCommand = rhs.recvExecCommand;
+	}
 	return *this;
 }
 
@@ -50,10 +55,45 @@ bool Parser::parseFromString(std::string const &str) {
     }
 	return true;
 }
-bool Parser::parseOneLine(std::string const &str, int lineNbr) {
-	std::cout << lineNbr << ": " << str << std::endl;
-	#warning call Avm.saveInstr()
+
+std::string trim(std::string const & str,
+                 std::string const & whitespace = WHITESPACE) {
+    const auto strBegin = str.find_first_not_of(whitespace);
+    if (strBegin == std::string::npos)
+        return "";  // no content
+
+    const auto strEnd = str.find_last_not_of(whitespace);
+    const auto strRange = strEnd - strBegin + 1;
+
+    return str.substr(strBegin, strRange);
+}
+
+bool Parser::parseOneLine(std::string const &line, int lineNbr) {
+	std::string str = trim(line);
+	if (str.size() == 0)
+		return true;  // empty line
+	if (str.size() == 2 && str == ";;") {
+		recvExecCommand = true;
+		return true;  // exec program
+	}
+	if (str[0] == ';')
+		return true;  // comment
+
+
+	_errors.push_back(Error(lineNbr, line, "invalid syntax"));
+	return false;
+
 	return true;
 }
 
+void Parser::printErrors() const {
+	for (auto it = _errors.begin(); it != _errors.end(); it++) {
+		std::cout << *it;
+	}
+}
+void Parser::clearErrors() {
+	_errors.empty();
+}
+
 Avm const	&Parser::getAvm() const { return _avm; }
+std::vector<Error> Parser::getErrors() const { return _errors; }

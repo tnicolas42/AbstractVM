@@ -1,7 +1,9 @@
 #include <iostream>
+#include <string>
 #include "Operand.hpp"
 #include "Avm.hpp"
 #include "Parser.hpp"
+#include "Exceptions.hpp"
 
 int		main(int ac, char **av) {
 	(void)ac;
@@ -9,15 +11,35 @@ int		main(int ac, char **av) {
 	Avm		avm;
 	Parser	parser(avm);
 
-	parser.parseFromString(std::string("line\nother line\nagain a line"));
-
-	// IOperand const *int8Var = Avm::createOperand(Int32, av[1]);
-	// IOperand const *floatVar = Avm::createOperand(Double, av[1]);
-
-	// std::cout << int8Var->toString() << std::endl;
-	// std::cout << floatVar->toString() << std::endl;
-	// std::cout << "float " << (*floatVar / *int8Var)->toString() << std::endl;
-	// std::cout << "int " << (*int8Var + *int8Var)->toString() << std::endl;
-
+	if (ac >= 2) {
+		for (int i=1; i < ac; i++) {
+			if (parser.parseFromFile(av[i]))
+				avm.exec();
+			else
+				parser.printErrors();
+			avm.clearInstr();
+			parser.clearErrors();
+		}
+	} else {
+		std::string line;
+		std::vector<Error> errors;
+		int i = 1;
+		bool isError = false;
+		while(std::cin) {
+			std::getline(std::cin, line);
+			if (parser.parseOneLine(line, i) == false)
+				isError = true;
+			if (parser.recvExecCommand)
+				break;
+			i++;
+		}
+		if (isError) {
+			parser.printErrors();
+		} else {
+			avm.exec();
+		}
+			avm.clearInstr();
+			parser.clearErrors();
+	}
 	return 0;
 }
