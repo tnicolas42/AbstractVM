@@ -11,11 +11,13 @@ SRC =	main.cpp \
 		Avm.cpp \
 		IOperand.cpp \
 		Exceptions.cpp \
+		Parser.cpp \
 
 HEAD =	Avm.hpp \
 		IOperand.hpp \
 		Operand.hpp \
 		Exceptions.hpp \
+		Parser.hpp \
 
 CC = g++
 DEBUG_FLAGS = -g3 -fsanitize=address
