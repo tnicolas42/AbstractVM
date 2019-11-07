@@ -9,7 +9,7 @@ int		main(int ac, char **av) {
 	(void)ac;
 	(void)av;
 	Avm		avm;
-	Parser	parser(avm);
+	Parser	parser(&avm);
 
 	if (ac >= 2) {
 		for (int i=1; i < ac; i++) {

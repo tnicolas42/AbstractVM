@@ -31,16 +31,13 @@ class Avm {
 		struct Instruction {
 			eInstr			instrType;
 			eOperandType	operandType;
-			union Data {
-				int8_t	Int8;
-				int16_t	Int16;
-				int32_t	Int32;
-				float	Float;
-				double	Double;
-			} data;
+			IOperand const	*operand;
+
+			Instruction();
+			~Instruction();
 		};
 
-		void saveInstr(Instruction const &instr);
+		void saveInstr(Instruction const *instr);
 		void clearInstr();
 		void exec();
 
@@ -56,5 +53,5 @@ class Avm {
 		static std::regex const _regexFloat;
 		static std::regex const _regexInt;
 
-		std::queue<Instruction const>	_listInstr;
+		std::queue<Instruction const *>	_listInstr;
 };

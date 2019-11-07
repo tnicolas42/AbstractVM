@@ -18,12 +18,15 @@ Avm &Avm::operator=(Avm const &rhs) {
 	return *this;
 }
 
-void Avm::saveInstr(Instruction const &instr) {
+void Avm::saveInstr(Instruction const *instr) {
 	_listInstr.push(instr);
 }
 
 void Avm::clearInstr() {
-	_listInstr.empty();
+    while (!_listInstr.empty()) {
+		delete _listInstr.front();
+        _listInstr.pop();
+	}
 }
 
 void Avm::exec() {
@@ -88,6 +91,12 @@ IOperand const * Avm::createOperand(eOperandType type, std::string const & value
 			return createDouble(value);
 	}
 	return nullptr;
+}
+
+Avm::Instruction::Instruction() :
+instrType(InstrExit), operandType(Int8), operand(nullptr) {}
+Avm::Instruction::~Instruction() {
+	delete operand;
 }
 
 std::regex const Avm::_regexFloat = std::regex(

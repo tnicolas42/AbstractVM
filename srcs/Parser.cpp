@@ -3,7 +3,28 @@
 #include <algorithm>
 #include "Parser.hpp"
 
-Parser::Parser(Avm const & avm) :
+const std::map<std::string, eInstr> Parser::_instrMap = {
+	{"push", InstrPush},
+	{"pop", InstrPop},
+	{"assert", InstrAssert},
+	{"add", InstrAdd},
+	{"sub", InstrSub},
+	{"mul", InstrMul},
+	{"div", InstrDiv},
+	{"mod", InstrMod},
+	{"dump", InstrPrint},
+	{"exit", InstrExit},
+};
+
+const std::map<std::string, eOperandType> Parser::_typeMap = {
+	{"Int8", Int8},
+	{"Int16", Int16},
+	{"Int32", Int32},
+	{"Float", Float},
+	{"Double", Double},
+};
+
+Parser::Parser(Avm * avm) :
 recvExecCommand(false),
 _errors(),
 _avm(avm) {
@@ -79,10 +100,79 @@ bool Parser::parseOneLine(std::string const &line, int lineNbr) {
 	if (str[0] == ';')
 		return true;  // comment
 
+	std::vector<std::string> words;
+	std::istringstream stream(str);
+	std::copy(std::istream_iterator<std::string>(stream),
+			  std::istream_iterator<std::string>(),
+			  std::back_inserter(words));
+	if (words.size() == 0) {
+		return true;
+	}
+	std::string command = words[0];
+	// command == push, dump, ...
+	words.erase(words.begin());
 
-	_errors.push_back(Error(lineNbr, line, "invalid syntax"));
-	return false;
+	Avm::Instruction *instr = new Avm::Instruction;
 
+	bool isValidCommand = false;
+	for (auto it = _instrMap.begin(); it != _instrMap.end(); it++) {
+		if (command == it->first) {
+			instr->instrType = it->second;
+			isValidCommand = true;
+			break;
+		}
+	}
+	if (isValidCommand == false) {
+		_errors.push_back(Error(lineNbr, line, std::string("invalid command: ") + command));
+		return false;
+	}
+	if (instr->instrType == InstrPush || instr->instrType == InstrAssert) {
+		if (words.size() == 0) {
+			_errors.push_back(Error(lineNbr, line, command + " need one argument"));
+			return false;
+		}
+		std::string arg;
+		for (auto it = words.begin(); it != words.end(); it++) {
+			arg += *it;
+		}
+
+		if (arg[arg.size() - 1] != ')') {
+			_errors.push_back(Error(lineNbr, line, "invalid syntax"));
+			return false;
+		}
+		arg = arg.substr(0, arg.size()-1);
+		std::string argType = arg.substr(0, arg.find("("));
+		// argType == Int8, Float, ...
+
+
+		bool isValidType = false;
+		for (auto it = _typeMap.begin(); it != _typeMap.end(); it++) {
+			if (argType == it->first) {
+				instr->operandType = it->second;
+				isValidType = true;
+				break;
+			}
+		}
+		if (isValidType == false) {
+			_errors.push_back(Error(lineNbr, line, std::string("invalid type: ") + argType));
+			return false;
+		}
+
+		std::string valueStr = arg.substr(arg.find("(")+1, arg.size()-1);
+
+		IOperand const * val = _avm->createOperand(instr->operandType, valueStr);
+		if (val == nullptr) {
+			_errors.push_back(Error(lineNbr, line, std::string("invalid value: ") + valueStr));
+			return false;
+		}
+		instr->operand = val;
+
+	} else if (words.size() > 0) {
+		_errors.push_back(Error(lineNbr, line, command + " need no arguments"));
+		return false;
+	}
+
+	_avm->saveInstr(instr);
 	return true;
 }
 
@@ -92,8 +182,8 @@ void Parser::printErrors() const {
 	}
 }
 void Parser::clearErrors() {
-	_errors.empty();
+	_errors.clear();
 }
 
-Avm const	&Parser::getAvm() const { return _avm; }
-std::vector<Error> Parser::getErrors() const { return _errors; }
+Avm					*Parser::getAvm() const { return _avm; }
+std::vector<Error>	Parser::getErrors() const { return _errors; }
