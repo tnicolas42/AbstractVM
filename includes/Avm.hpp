@@ -3,13 +3,16 @@
 #include <string>
 #include <regex>
 #include <queue>
+#include <stack>
 #include "Operand.hpp"
+#include "Exceptions.hpp"
 
 #define WHITESPACE "\t "
 
 enum eInstr {
 	InstrPush,
 	InstrPop,
+	InstrDump,
 	InstrAssert,
 	InstrAdd,
 	InstrSub,
@@ -31,7 +34,11 @@ class Avm {
 		struct Instruction {
 			eInstr			instrType;
 			eOperandType	operandType;
-			IOperand const	*operand;
+			std::string		value;
+
+			// for errors
+			std::string		lineStr;
+			int				lineNbr;
 
 			Instruction();
 			~Instruction();
@@ -40,6 +47,8 @@ class Avm {
 		void saveInstr(Instruction const *instr);
 		void clearInstr();
 		void exec();
+
+		bool getExitStatus() const;
 
 		/* factory to create operand */
 		static IOperand const * createInt8(std::string const & value);
@@ -53,5 +62,15 @@ class Avm {
 		static std::regex const _regexFloat;
 		static std::regex const _regexInt;
 
+		Error	*_error;
+		bool	_isExit;
+
 		std::queue<Instruction const *>	_listInstr;
+		std::stack<IOperand const *> _stack;
+
+		void _stackEmptyError(Instruction const *instr);
+
+		void _execDump();
+		void _execAssert(Instruction const *instr);
+		void _execOneInstr(Instruction const *instr);
 };

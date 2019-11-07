@@ -28,3 +28,8 @@ class OverflowError : public AvmError {
 	public:
 		virtual char const * what() const throw();
 };
+
+class StackEmptyError : public AvmError {
+	public:
+		virtual char const * what() const throw();
+};

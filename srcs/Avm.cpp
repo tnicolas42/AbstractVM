@@ -2,7 +2,11 @@
 #include "Avm.hpp"
 #include "Exceptions.hpp"
 
-Avm::Avm() {
+Avm::Avm() :
+_error(nullptr),
+_isExit(false),
+_listInstr(),
+_stack() {
 }
 
 Avm::Avm(Avm const &src) {
@@ -13,8 +17,9 @@ Avm::~Avm() {
 }
 
 Avm &Avm::operator=(Avm const &rhs) {
-	(void)rhs;
-	// if (this != &rhs) {}
+	if (this != &rhs) {
+		_isExit = rhs.getExitStatus();
+	}
 	return *this;
 }
 
@@ -27,11 +32,109 @@ void Avm::clearInstr() {
 		delete _listInstr.front();
         _listInstr.pop();
 	}
+    while (!_stack.empty()) {
+		delete _stack.top();
+        _stack.pop();
+	}
+	_isExit = false;
+}
+
+void Avm::_stackEmptyError(Instruction const *instr) {
+	if (_stack.empty()) {
+		_error = new Error(instr->lineNbr, instr->lineStr,
+			"The stack is empty");
+		_isExit = true;
+		throw StackEmptyError();
+	}
+}
+
+void Avm::_execDump() {
+	std::stack<IOperand const *> tmp;
+	while (!_stack.empty()) {
+		std::cout << _stack.top()->toString() << std::endl;
+		tmp.push(_stack.top());
+		_stack.pop();
+	}
+	while (!tmp.empty()) {
+		_stack.push(tmp.top());
+		tmp.pop();
+	}
+}
+
+void Avm::_execAssert(Instruction const *instr) {
+	_stackEmptyError(instr);
+
+	IOperand const *cmp = createOperand(instr->operandType, instr->value);
+
+	if (!(*cmp == *_stack.top())) {
+		std::cout << "AssertError: " << cmp->toString() << " is not egal to "
+			<< _stack.top()->toString() << std::endl;
+		_isExit = true;
+	}
+
+	delete cmp;
+}
+
+void Avm::_execOneInstr(Instruction const *instr) {
+	switch (instr->instrType) {
+		case InstrPush:
+			_stack.push(createOperand(instr->operandType, instr->value));
+			break;
+		case InstrPop:
+			_stackEmptyError(instr);
+			delete _stack.top();
+			_stack.pop();
+			break;
+		case InstrDump:
+			_execDump();
+			break;
+		case InstrAssert:
+			_execAssert(instr);
+			break;
+		case InstrAdd:
+			std::cout << "not added" << std::endl;
+			break;
+		case InstrSub:
+			std::cout << "not added" << std::endl;
+			break;
+		case InstrMul:
+			std::cout << "not added" << std::endl;
+			break;
+		case InstrDiv:
+			std::cout << "not added" << std::endl;
+			break;
+		case InstrMod:
+			std::cout << "not added" << std::endl;
+			break;
+		case InstrPrint:
+			std::cout << _stack.top()->toString() << std::endl;
+			break;
+		case InstrExit:
+			_isExit = true;
+			break;
+	}
 }
 
 void Avm::exec() {
-	std::cout << "exec function todo" << std::endl;
+    while (!_listInstr.empty()) {
+		try {
+			_execOneInstr(_listInstr.front());
+		}
+		catch (StackEmptyError &e) {}
+		if (_error != nullptr) {
+			std::cout << *_error;
+			delete _error;
+			_error = nullptr;
+		}
+		if (_isExit) {  // exit if recv exit instr
+			break;
+		}
+		delete _listInstr.front();
+		_listInstr.pop();
+	}
 }
+
+bool Avm::getExitStatus() const { return _isExit; }
 
 IOperand const * Avm::createInt8(std::string const & value) {
 	if (std::regex_match(value, _regexInt) == false)
@@ -94,10 +197,9 @@ IOperand const * Avm::createOperand(eOperandType type, std::string const & value
 }
 
 Avm::Instruction::Instruction() :
-instrType(InstrExit), operandType(Int8), operand(nullptr) {}
-Avm::Instruction::~Instruction() {
-	delete operand;
-}
+instrType(InstrExit), operandType(Int8), value(""),
+lineStr(""), lineNbr(-1) {}
+Avm::Instruction::~Instruction() {}
 
 std::regex const Avm::_regexFloat = std::regex(
 	"^[ \n\t\r]*([-+]?\\d+\\.?\\d*f?|[-+][iI][nN][fF]|[nN][aA][nN])[ \n\t\r]*$");

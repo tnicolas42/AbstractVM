@@ -19,3 +19,6 @@ char const * ConvertError::what() const throw() {
 char const * OverflowError::what() const throw() {
 	return "overflow";
 }
+char const * StackEmptyError::what() const throw() {
+	return "empty stack";
+}

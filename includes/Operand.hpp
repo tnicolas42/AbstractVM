@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include "IOperand.hpp"
+#include "Avm.hpp"
 
 enum eOperator {
 	OP_ADD, OP_SUB, OP_MUL, OP_DIV, OP_MOD
@@ -42,6 +43,15 @@ class Operand : public IOperand {
 		}
 		IOperand const * operator%(IOperand const & rhs) const {
 			return operation(rhs, OP_MOD);
+		}
+		bool operator==(IOperand const & rhs) const {
+			eOperandType	retType = (getType() > rhs.getType()) ? getType() : rhs.getType();
+
+			if (retType >= Float) {  // float comparison
+				return toDouble() == rhs.toDouble();
+			}
+			// int comparison
+			return toInt32() == rhs.toInt32();
 		}
 		std::string const toString() const {
 			return std::to_string(_value);

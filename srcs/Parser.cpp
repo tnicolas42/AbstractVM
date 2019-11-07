@@ -6,13 +6,14 @@
 const std::map<std::string, eInstr> Parser::_instrMap = {
 	{"push", InstrPush},
 	{"pop", InstrPop},
+	{"dump", InstrDump},
 	{"assert", InstrAssert},
 	{"add", InstrAdd},
 	{"sub", InstrSub},
 	{"mul", InstrMul},
 	{"div", InstrDiv},
 	{"mod", InstrMod},
-	{"dump", InstrPrint},
+	{"print", InstrPrint},
 	{"exit", InstrExit},
 };
 
@@ -114,6 +115,9 @@ bool Parser::parseOneLine(std::string const &line, int lineNbr) {
 
 	Avm::Instruction *instr = new Avm::Instruction;
 
+	instr->lineNbr = lineNbr;
+	instr->lineStr = line;
+
 	bool isValidCommand = false;
 	for (auto it = _instrMap.begin(); it != _instrMap.end(); it++) {
 		if (command == it->first) {
@@ -165,7 +169,8 @@ bool Parser::parseOneLine(std::string const &line, int lineNbr) {
 			_errors.push_back(Error(lineNbr, line, std::string("invalid value: ") + valueStr));
 			return false;
 		}
-		instr->operand = val;
+		instr->value = valueStr;
+		delete val;
 
 	} else if (words.size() > 0) {
 		_errors.push_back(Error(lineNbr, line, command + " need no arguments"));
