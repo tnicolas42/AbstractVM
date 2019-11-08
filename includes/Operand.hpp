@@ -2,8 +2,10 @@
 
 #include <string>
 #include <iostream>
+#include <limits>
 #include "IOperand.hpp"
 #include "Avm.hpp"
+#include "Exceptions.hpp"
 
 enum eOperator {
 	OP_ADD, OP_SUB, OP_MUL, OP_DIV, OP_MOD
@@ -51,7 +53,7 @@ class Operand : public IOperand {
 				return toDouble() == rhs.toDouble();
 			}
 			// int comparison
-			return toInt32() == rhs.toInt32();
+			return toInt64() == rhs.toInt64();
 		}
 		std::string const toString() const {
 			return std::to_string(_value);
@@ -59,8 +61,8 @@ class Operand : public IOperand {
 		double toDouble() const {
 			return static_cast<double>(_value);
 		}
-		int32_t toInt32() const {
-			return static_cast<int32_t>(_value);
+		int64_t toInt64() const {
+			return static_cast<int64_t>(_value);
 		}
 
 	private:
@@ -71,7 +73,7 @@ class Operand : public IOperand {
 			eOperandType	retType = (getType() > rhs.getType()) ? getType() : rhs.getType();
 			bool			floatType = false;
 			double			dval = 0;
-			int32_t			ival = 0;
+			int64_t			ival = 0;
 
 			if (retType >= Float) {
 				floatType = true;
@@ -82,41 +84,50 @@ class Operand : public IOperand {
 					if (floatType)
 						dval = this->toDouble() + rhs.toDouble();
 					else
-						ival = this->toInt32() + rhs.toInt32();
+						ival = this->toInt64() + rhs.toInt64();
 					break;
 				case OP_SUB:
 					if (floatType)
 						dval = this->toDouble() - rhs.toDouble();
 					else
-						ival = this->toInt32() - rhs.toInt32();
+						ival = this->toInt64() - rhs.toInt64();
 					break;
 				case OP_MUL:
 					if (floatType)
 						dval = this->toDouble() * rhs.toDouble();
 					else
-						ival = this->toInt32() * rhs.toInt32();
+						ival = this->toInt64() * rhs.toInt64();
 					break;
 				case OP_DIV:
 					if (floatType)
 						dval = this->toDouble() / rhs.toDouble();
 					else
-						ival = this->toInt32() / rhs.toInt32();
+						ival = this->toInt64() / rhs.toInt64();
 					break;
 				case OP_MOD:
 					if (floatType)
 						dval = 0;
 					else
-						ival = this->toInt32() + rhs.toInt32();
+						ival = this->toInt64() + rhs.toInt64();
 					break;
 			}
 			switch (retType) {
 				case Int8:
+					if (ival > static_cast<int64_t>(std::numeric_limits<int8_t>::max())
+					|| ival < static_cast<int64_t>(std::numeric_limits<int8_t>::min()))
+						throw OverflowError();
 					res = new Operand<int8_t, Int8>(static_cast<int8_t>(ival));
 					break;
 				case Int16:
+					if (ival > static_cast<int64_t>(std::numeric_limits<int16_t>::max())
+					|| ival < static_cast<int64_t>(std::numeric_limits<int16_t>::min()))
+						throw OverflowError();
 					res = new Operand<int16_t, Int16>(static_cast<int16_t>(ival));
 					break;
 				case Int32:
+					if (ival > static_cast<int64_t>(std::numeric_limits<int32_t>::max())
+					|| ival < static_cast<int64_t>(std::numeric_limits<int32_t>::min()))
+						throw OverflowError();
 					res = new Operand<int32_t, Int32>(ival);
 					break;
 				case Float:

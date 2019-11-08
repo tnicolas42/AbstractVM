@@ -72,5 +72,6 @@ class Avm {
 
 		void _execDump();
 		void _execAssert(Instruction const *instr);
+		void _execCalc(Instruction const *instr);
 		void _execOneInstr(Instruction const *instr);
 };

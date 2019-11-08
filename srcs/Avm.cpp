@@ -43,7 +43,6 @@ void Avm::_stackEmptyError(Instruction const *instr) {
 	if (_stack.empty()) {
 		_error = new Error(instr->lineNbr, instr->lineStr,
 			"The stack is empty");
-		_isExit = true;
 		throw StackEmptyError();
 	}
 }
@@ -75,6 +74,61 @@ void Avm::_execAssert(Instruction const *instr) {
 	delete cmp;
 }
 
+void Avm::_execCalc(Instruction const * instr) {
+	_stackEmptyError(instr);
+
+	IOperand const * first = _stack.top();
+	_stack.pop();
+
+	try {
+		_stackEmptyError(instr);
+	}
+	catch (StackEmptyError &e) {
+		delete first;
+		throw StackEmptyError();
+	}
+	IOperand const * second = _stack.top();
+	_stack.pop();
+
+	IOperand const * res;
+	try {
+		switch (instr->instrType) {
+			case InstrAdd:
+				res = *first + *second;
+				break;
+			case InstrSub:
+				res = *first - *second;
+				break;
+			case InstrMul:
+				res = *first * *second;
+				break;
+			case InstrDiv:
+				res = *first / *second;
+				break;
+			case InstrMod:
+				res = *first % *second;
+				break;
+			default:
+				_stack.push(first);
+				_stack.push(second);
+				throw InvalidInstructionError();
+				break;
+		}
+	}
+	catch (OverflowError &e) {
+		_error = new Error(instr->lineNbr,
+			instr->lineStr,
+			"Overflow");
+			_stack.push(first);
+			_stack.push(second);
+			throw OverflowError();
+	}
+	delete first;
+	delete second;
+	_stack.push(res);
+}
+
+
 void Avm::_execOneInstr(Instruction const *instr) {
 	switch (instr->instrType) {
 		case InstrPush:
@@ -91,26 +145,14 @@ void Avm::_execOneInstr(Instruction const *instr) {
 		case InstrAssert:
 			_execAssert(instr);
 			break;
-		case InstrAdd:
-			std::cout << "not added" << std::endl;
-			break;
-		case InstrSub:
-			std::cout << "not added" << std::endl;
-			break;
-		case InstrMul:
-			std::cout << "not added" << std::endl;
-			break;
-		case InstrDiv:
-			std::cout << "not added" << std::endl;
-			break;
-		case InstrMod:
-			std::cout << "not added" << std::endl;
-			break;
 		case InstrPrint:
 			std::cout << _stack.top()->toString() << std::endl;
 			break;
 		case InstrExit:
 			_isExit = true;
+			break;
+		default:
+			_execCalc(instr);
 			break;
 	}
 }
@@ -121,6 +163,17 @@ void Avm::exec() {
 			_execOneInstr(_listInstr.front());
 		}
 		catch (StackEmptyError &e) {}
+		catch (OverflowError &e) {}
+		catch (InvalidInstructionError &e) {
+			_error = new Error(_listInstr.front()->lineNbr,
+				_listInstr.front()->lineStr,
+				"Invalid instruction");
+		}
+		catch (AvmError &e) {
+			_error = new Error(_listInstr.front()->lineNbr,
+				_listInstr.front()->lineStr,
+				"Invalid instruction");
+		}
 		if (_error != nullptr) {
 			std::cout << *_error;
 			delete _error;

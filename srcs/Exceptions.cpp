@@ -22,3 +22,6 @@ char const * OverflowError::what() const throw() {
 char const * StackEmptyError::what() const throw() {
 	return "empty stack";
 }
+char const * InvalidInstructionError::what() const throw() {
+	return "invalid instruction";
+}

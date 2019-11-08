@@ -33,3 +33,8 @@ class StackEmptyError : public AvmError {
 	public:
 		virtual char const * what() const throw();
 };
+
+class InvalidInstructionError : public AvmError {
+	public:
+		virtual char const * what() const throw();
+};
