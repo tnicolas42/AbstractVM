@@ -164,7 +164,14 @@ bool Parser::parseOneLine(std::string const &line, int lineNbr) {
 
 		std::string valueStr = arg.substr(arg.find("(")+1, arg.size()-1);
 
-		IOperand const * val = _avm->createOperand(instr->operandType, valueStr);
+		IOperand const * val;
+		try {
+			val = _avm->createOperand(instr->operandType, valueStr);
+		}
+		catch (AvmError &e) {
+			_errors.push_back(Error(lineNbr, line, e.what()));
+			return false;
+		}
 		if (val == nullptr) {
 			_errors.push_back(Error(lineNbr, line, std::string("invalid value: ") + valueStr));
 			return false;

@@ -25,3 +25,6 @@ char const * StackEmptyError::what() const throw() {
 char const * InvalidInstructionError::what() const throw() {
 	return "invalid instruction";
 }
+char const * ModOnDoubleError::what() const throw() {
+	return "invalid operator: % on Float or Double";
+}

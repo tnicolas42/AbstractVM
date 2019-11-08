@@ -1,10 +1,4 @@
-; ok c'est un test
-
-push Int8(123)
-push Int8(125)
-
-add
-sub
+push Int8(200)
 
 dump
 

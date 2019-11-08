@@ -38,3 +38,8 @@ class InvalidInstructionError : public AvmError {
 	public:
 		virtual char const * what() const throw();
 };
+
+class ModOnDoubleError : public AvmError {
+	public:
+		virtual char const * what() const throw();
+};

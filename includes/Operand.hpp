@@ -106,9 +106,9 @@ class Operand : public IOperand {
 					break;
 				case OP_MOD:
 					if (floatType)
-						dval = 0;
+						throw ModOnDoubleError();
 					else
-						ival = this->toInt64() + rhs.toInt64();
+						ival = this->toInt64() % rhs.toInt64();
 					break;
 			}
 			switch (retType) {

@@ -109,19 +109,21 @@ void Avm::_execCalc(Instruction const * instr) {
 				res = *first % *second;
 				break;
 			default:
-				_stack.push(first);
 				_stack.push(second);
+				_stack.push(first);
 				throw InvalidInstructionError();
 				break;
 		}
 	}
 	catch (OverflowError &e) {
-		_error = new Error(instr->lineNbr,
-			instr->lineStr,
-			"Overflow");
-			_stack.push(first);
-			_stack.push(second);
-			throw OverflowError();
+		_stack.push(second);
+		_stack.push(first);
+		throw OverflowError();
+	}
+	catch (ModOnDoubleError &e) {
+		_stack.push(second);
+		_stack.push(first);
+		throw ModOnDoubleError();
 	}
 	delete first;
 	delete second;
@@ -162,17 +164,12 @@ void Avm::exec() {
 		try {
 			_execOneInstr(_listInstr.front());
 		}
-		catch (StackEmptyError &e) {}
-		catch (OverflowError &e) {}
-		catch (InvalidInstructionError &e) {
-			_error = new Error(_listInstr.front()->lineNbr,
-				_listInstr.front()->lineStr,
-				"Invalid instruction");
-		}
 		catch (AvmError &e) {
-			_error = new Error(_listInstr.front()->lineNbr,
-				_listInstr.front()->lineStr,
-				"Invalid instruction");
+			if (_error == nullptr) {
+				_error = new Error(_listInstr.front()->lineNbr,
+					_listInstr.front()->lineStr,
+					e.what());
+			}
 		}
 		if (_error != nullptr) {
 			std::cout << *_error;
