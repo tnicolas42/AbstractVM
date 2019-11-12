@@ -5,6 +5,7 @@
 Avm::Avm() :
 _error(nullptr),
 _isExit(false),
+_isVerbose(false),
 _listInstr(),
 _stack() {
 }
@@ -84,7 +85,7 @@ void Avm::_execCalc(Instruction const * instr) {
 		_stackEmptyError(instr);
 	}
 	catch (StackEmptyError &e) {
-		delete first;
+		_stack.push(first);
 		throw StackEmptyError();
 	}
 	IOperand const * second = _stack.top();
@@ -148,6 +149,7 @@ void Avm::_execOneInstr(Instruction const *instr) {
 			_execAssert(instr);
 			break;
 		case InstrPrint:
+			_stackEmptyError(instr);
 			std::cout << _stack.top()->toString() << std::endl;
 			break;
 		case InstrExit:
@@ -159,8 +161,12 @@ void Avm::_execOneInstr(Instruction const *instr) {
 	}
 }
 
-void Avm::exec() {
+void Avm::exec(bool instantExec) {
     while (!_listInstr.empty()) {
+		if (_isVerbose) {
+			std::cout << BOLD  << ">>> " << EOC << "[" << _listInstr.front()->lineNbr << "] "
+				<< _listInstr.front()->lineStr << std::endl;
+		}
 		try {
 			_execOneInstr(_listInstr.front());
 		}
@@ -182,12 +188,16 @@ void Avm::exec() {
 		delete _listInstr.front();
 		_listInstr.pop();
 	}
-	if (!_isExit) {
-		std::cout << "Warning: missing exit instruction" << std::endl;
+	if (!instantExec) {
+		if (!_isExit) {
+			std::cout << YELLOW << BOLD << "Warning:" << EOC << BOLD << " missing exit instruction" << EOC << std::endl;
+		}
 	}
 }
 
+void Avm::setVerbose(bool verbose) { _isVerbose = verbose; }
 bool Avm::getExitStatus() const { return _isExit; }
+bool Avm::isVerbose() const { return _isVerbose; }
 
 IOperand const * Avm::createInt8(std::string const & value) {
 	if (std::regex_match(value, _regexInt) == false)

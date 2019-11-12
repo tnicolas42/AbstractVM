@@ -5,8 +5,11 @@ Error::Error(int ln, std::string lineStr, std::string msg) :
 lineNbr(ln), line(lineStr), errorMsg(msg) {}
 
 std::ostream &operator<<(std::ostream &o, const Error &other) {
-	o << "Error (line " << other.lineNbr << ") -> " << other.line << std::endl;
-	o << "\t" << other.errorMsg << std::endl;
+	o << RED << BOLD << "Error:" << EOC;
+	if (other.lineNbr >= 0)
+		o << " (line " << other.lineNbr << ") ->";
+	o << " " << other.line << std::endl;
+	o << "\t" << BOLD << other.errorMsg << EOC << std::endl;
 	return o;
 }
 

@@ -10,8 +10,7 @@
 ; print
 ; exit
 
-push int8(0)
+push float(0)
 push int8(5)
 div
-print
-exit
+dump

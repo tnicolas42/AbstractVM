@@ -46,9 +46,11 @@ class Avm {
 
 		void saveInstr(Instruction const *instr);
 		void clearInstr();
-		void exec();
+		void exec(bool instantExec = false);
 
 		bool getExitStatus() const;
+		bool isVerbose() const;
+		void setVerbose(bool verbose);
 
 		/* factory to create operand */
 		static IOperand const * createInt8(std::string const & value);
@@ -64,6 +66,7 @@ class Avm {
 
 		Error	*_error;
 		bool	_isExit;
+		bool	_isVerbose;
 
 		std::queue<Instruction const *>	_listInstr;
 		std::stack<IOperand const *> _stack;

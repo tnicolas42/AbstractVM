@@ -100,11 +100,11 @@ class Operand : public IOperand {
 					break;
 				case OP_DIV:
 					if (floatType) {
-						if (dval == 0)
+						if (rhs.toDouble() == 0)
 							throw DivByZeroError();
 						dval = this->toDouble() / rhs.toDouble();
 					} else {
-						if (ival == 0)
+						if (rhs.toInt64() == 0)
 							throw DivByZeroError();
 						ival = this->toInt64() / rhs.toInt64();
 					}
