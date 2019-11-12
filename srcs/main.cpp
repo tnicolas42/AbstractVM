@@ -24,6 +24,11 @@ int		main(int ac, char **av) {
 					std::cout << BOLD << "[" << GREEN << "+" << EOC << BOLD << "] " << EOC
 					"instant exec mode activaed" << std::endl;
 					instantExec = true;
+				} else if (strcmp(av[i], "--usage") == 0) {
+					std::cout << "Usage: ./avm [--opt] [files]" << std::endl;
+					std::cout << "\t--verbose: verbose mode" << std::endl;
+					std::cout << "\t--instant-exec: (if stdin mode) exec instant all instructions" << std::endl;
+					return 0;
 				} else {
 					std::cout << Error(-1, av[i], "invalid option");
 				}
@@ -65,7 +70,7 @@ int		main(int ac, char **av) {
 				avm.exec(true);
 				parser.clearErrors();
 				if (avm.getExitStatus())
-					break; // exit
+					break;  // exit
 			}
 			i++;
 		}
