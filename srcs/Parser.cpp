@@ -18,11 +18,11 @@ const std::map<std::string, eInstr> Parser::_instrMap = {
 };
 
 const std::map<std::string, eOperandType> Parser::_typeMap = {
-	{"Int8", Int8},
-	{"Int16", Int16},
-	{"Int32", Int32},
-	{"Float", Float},
-	{"Double", Double},
+	{"int8", Int8},
+	{"int16", Int16},
+	{"int32", Int32},
+	{"float", Float},
+	{"double", Double},
 };
 
 Parser::Parser(Avm * avm) :

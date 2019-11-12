@@ -99,10 +99,15 @@ class Operand : public IOperand {
 						ival = this->toInt64() * rhs.toInt64();
 					break;
 				case OP_DIV:
-					if (floatType)
+					if (floatType) {
+						if (dval == 0)
+							throw DivByZeroError();
 						dval = this->toDouble() / rhs.toDouble();
-					else
+					} else {
+						if (ival == 0)
+							throw DivByZeroError();
 						ival = this->toInt64() / rhs.toInt64();
+					}
 					break;
 				case OP_MOD:
 					if (floatType)

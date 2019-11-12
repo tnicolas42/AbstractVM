@@ -115,15 +115,15 @@ void Avm::_execCalc(Instruction const * instr) {
 				break;
 		}
 	}
-	catch (OverflowError &e) {
+	catch (AvmError &e) {
 		_stack.push(second);
 		_stack.push(first);
-		throw OverflowError();
-	}
-	catch (ModOnDoubleError &e) {
-		_stack.push(second);
-		_stack.push(first);
-		throw ModOnDoubleError();
+		if (_error == nullptr) {
+			_error = new Error(instr->lineNbr,
+				instr->lineStr,
+				e.what());
+		}
+		throw AvmError();
 	}
 	delete first;
 	delete second;
@@ -181,6 +181,9 @@ void Avm::exec() {
 		}
 		delete _listInstr.front();
 		_listInstr.pop();
+	}
+	if (!_isExit) {
+		std::cout << "Warning: missing exit instruction" << std::endl;
 	}
 }
 

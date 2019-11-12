@@ -1,5 +1,17 @@
-push Int8(200)
+; push
+; pop
+; dump
+; assert
+; add
+; sub
+; mul
+; div
+; mod
+; print
+; exit
 
-dump
-
+push int8(0)
+push int8(5)
+div
+print
 exit

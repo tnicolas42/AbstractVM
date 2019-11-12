@@ -43,3 +43,8 @@ class ModOnDoubleError : public AvmError {
 	public:
 		virtual char const * what() const throw();
 };
+
+class DivByZeroError : public AvmError {
+	public:
+		virtual char const * what() const throw();
+};

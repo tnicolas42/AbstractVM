@@ -28,3 +28,6 @@ char const * InvalidInstructionError::what() const throw() {
 char const * ModOnDoubleError::what() const throw() {
 	return "invalid operator: % on Float or Double";
 }
+char const * DivByZeroError::what() const throw() {
+	return "division by zero";
+}
