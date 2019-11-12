@@ -110,10 +110,13 @@ class Operand : public IOperand {
 					}
 					break;
 				case OP_MOD:
-					if (floatType)
+					if (floatType) {
 						throw ModOnDoubleError();
-					else
+					} else {
+						if (rhs.toInt64() == 0)
+							throw DivByZeroError();
 						ival = this->toInt64() % rhs.toInt64();
+					}
 					break;
 			}
 			switch (retType) {
