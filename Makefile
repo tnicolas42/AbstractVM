@@ -11,12 +11,14 @@ SRC =	main.cpp \
 		Avm.cpp \
 		IOperand.cpp \
 		Exceptions.cpp \
+		Lexer.cpp \
 		Parser.cpp \
 
 HEAD =	Avm.hpp \
 		IOperand.hpp \
 		Operand.hpp \
 		Exceptions.hpp \
+		Lexer.hpp \
 		Parser.hpp \
 
 CC = g++

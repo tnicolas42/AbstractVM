@@ -10,6 +10,8 @@
 ; print
 ; exit
 
+push int8(s)
+
 push int32(42)
 push int32(33)
 add

@@ -2,14 +2,14 @@
 #include <string>
 #include "Operand.hpp"
 #include "Avm.hpp"
-#include "Parser.hpp"
+#include "Lexer.hpp"
 #include "Exceptions.hpp"
 
 int		main(int ac, char **av) {
 	(void)ac;
 	(void)av;
 	Avm		avm;
-	Parser	parser(&avm);
+	Lexer	Lexer(&avm);
 	bool	hasFiles = false;
 	bool	instantExec = false;
 
@@ -45,12 +45,12 @@ int		main(int ac, char **av) {
 			if (avm.isVerbose()) {
 				std::cout << BOLD << "exec " << EOC << av[i] << ":" << std::endl;
 			}
-			if (parser.parseFromFile(av[i]))
+			if (Lexer.parseFromFile(av[i]))
 				avm.exec();
 			else
-				parser.printErrors();
+				Lexer.printErrors();
 			avm.clearInstr();
-			parser.clearErrors();
+			Lexer.clearErrors();
 		}
 	} else {
 		std::string line;
@@ -59,28 +59,28 @@ int		main(int ac, char **av) {
 		bool isError = false;
 		while(std::cin) {
 			std::getline(std::cin, line);
-			if (parser.parseOneLine(line, i) == false)
+			if (Lexer.parseOneLine(line, i) == false)
 				isError = true;
-			if (parser.recvExecCommand)
+			if (Lexer.recvExecCommand)
 				break;
 			if (instantExec) {
 				if (isError) {
-					parser.printErrors();
+					Lexer.printErrors();
 				}
 				avm.exec(true);
-				parser.clearErrors();
+				Lexer.clearErrors();
 				if (avm.getExitStatus())
 					break;  // exit
 			}
 			i++;
 		}
 		if (isError) {
-			parser.printErrors();
+			Lexer.printErrors();
 		}
 		if (!instantExec)
 			avm.exec();
 		avm.clearInstr();
-		parser.clearErrors();
+		Lexer.clearErrors();
 	}
 	return 0;
 }
