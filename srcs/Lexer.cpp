@@ -57,10 +57,7 @@ bool Lexer::parseFromFile(std::string const &filename) {
 
 	int i = 1;
     for (std::string line; std::getline(file, line);) {
-		if (parseOneLine(line, i) == false) {
-			file.close();
-			return false;
-		}
+		parseOneLine(line, i);
 		i++;
     }
     file.close();
@@ -172,7 +169,6 @@ bool Lexer::parseOneLine(std::string const &line, int lineNbr) {
 	}
 
 	Parser parser;
-
 	if (parser.parseInstr(_avm, instr) == false)
 		return false;
 	return true;
