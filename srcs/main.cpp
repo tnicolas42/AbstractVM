@@ -57,8 +57,13 @@ int		main(int ac, char **av) {
 		std::vector<Error> errors;
 		int i = 1;
 		bool isError = false;
+		std::string lastLine = "";
 		while(std::cin) {
 			std::getline(std::cin, line);
+			if (line == "!!") {
+				line = lastLine;
+				std::cout << line << std::endl;
+			}
 			if (Lexer.parseOneLine(line, i) == false)
 				isError = true;
 			if (Lexer.recvExecCommand)
@@ -72,6 +77,7 @@ int		main(int ac, char **av) {
 				if (avm.getExitStatus())
 					break;  // exit
 			}
+			lastLine = line;
 			i++;
 		}
 		if (isError) {
