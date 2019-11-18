@@ -3,6 +3,12 @@ PROJECT_NAME = $(shell echo $(NAME) | tr a-z A-Z)# name in MAJUSCULE
 
 ARGS =
 
+# download the cpp linter (https://github.com/isocpp/CppCoreGuidelines)
+# set command to launch linter on LINTER
+# add rules for linter in LINTER_RULES
+LINTER = $(CPPLINT)
+LINTER_RULES = --filter=-whitespace/tab,-legal/copyright,-build/c++11,-whitespace/newline,-readability/braces,-whitespace/indent --linelength=120 --quiet
+
 SRCS_DIR	= srcs
 OBJS_DIR	= objs
 INC_DIR		= includes
@@ -90,10 +96,10 @@ exec:
 
 lint:
 	@printf $(BLUE)$(BOLD)"LINTER ON $(PROJECT_NAME)\n--------------------\n"$(NORMAL)
-	@if [ "$(CPPLINT)" = "" ]; then\
+	@if [ "$(LINTER)" = "" ]; then\
 		printf $(RED)$(BOLD)"Error:"$(NORMAL)" env var CPPLINT is not set\n"; \
 	else \
-		$(CPPLINT) $(HEADS) $(addprefix $(SRCS_DIR)/, $(SRC)); \
+		$(LINTER) $(LINTER_RULES) $(HEADS) $(addprefix $(SRCS_DIR)/, $(SRC)); \
     fi
 	@printf $(BLUE)$(BOLD)"--------------------\n"$(NORMAL)
 
