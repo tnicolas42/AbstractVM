@@ -2,6 +2,14 @@
 #include "Avm.hpp"
 #include "Exceptions.hpp"
 
+std::map<eOperandType, Avm::createFunc> Avm::_createMap = {
+	{Int8, &Avm::createInt8},
+	{Int16, &Avm::createInt16},
+	{Int32, &Avm::createInt32},
+	{Float, &Avm::createFloat},
+	{Double, &Avm::createDouble}
+};
+
 Avm::Avm() :
 _error(nullptr),
 _isExit(false),
@@ -150,7 +158,7 @@ void Avm::_execOneInstr(Instruction const *instr) {
 			break;
 		case InstrPrint:
 			_stackEmptyError(instr);
-			std::cout << _stack.top()->toString() << std::endl;
+			std::cout << _stack.top()->toChar() << std::endl;
 			break;
 		case InstrExit:
 			_isExit = true;
@@ -244,19 +252,7 @@ IOperand const * Avm::createDouble(std::string const & value) {
 	return res;
 }
 IOperand const * Avm::createOperand(eOperandType type, std::string const & value) {
-	switch (type) {
-		case Int8:
-			return createInt8(value);
-		case Int16:
-			return createInt16(value);
-		case Int32:
-			return createInt32(value);
-		case Float:
-			return createFloat(value);
-		case Double:
-			return createDouble(value);
-	}
-	return nullptr;
+	return _createMap[type](value);
 }
 
 Avm::Instruction::Instruction() :

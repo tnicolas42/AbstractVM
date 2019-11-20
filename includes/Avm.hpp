@@ -4,6 +4,7 @@
 #include <regex>
 #include <queue>
 #include <stack>
+#include <map>
 #include "Operand.hpp"
 #include "Exceptions.hpp"
 
@@ -53,6 +54,7 @@ class Avm {
 		void setVerbose(bool verbose);
 
 		/* factory to create operand */
+		typedef IOperand const * (*createFunc)(std::string const &);
 		static IOperand const * createInt8(std::string const & value);
 		static IOperand const * createInt16(std::string const & value);
 		static IOperand const * createInt32(std::string const & value);
@@ -70,6 +72,9 @@ class Avm {
 
 		std::queue<Instruction const *>	_listInstr;
 		std::stack<IOperand const *> _stack;
+
+		/* used in factory */
+		static std::map<eOperandType, createFunc> _createMap;
 
 		void _stackEmptyError(Instruction const *instr);
 

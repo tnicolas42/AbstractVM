@@ -17,6 +17,7 @@ class IOperand {
 		virtual IOperand const * operator%(IOperand const & rhs) const = 0;  // Modulo
 		virtual bool operator==(IOperand const & rhs) const = 0;  // Modulo
 		virtual std::string const toString() const = 0;  // String representation of the instance
+		virtual char toChar() const = 0;  // Char representation
 		virtual double toDouble() const = 0;  // String representation of the instance
 		virtual int64_t toInt64() const = 0;  // String representation of the instance
 		virtual ~IOperand();

@@ -58,6 +58,11 @@ class Operand : public IOperand {
 		std::string const toString() const {
 			return std::to_string(_value);
 		}
+		char toChar() const {
+			if (toInt64() >= 1 && toInt64() <= 176)
+				return static_cast<char>(toInt64());
+			throw ConvertError();
+		}
 		double toDouble() const {
 			return static_cast<double>(_value);
 		}
