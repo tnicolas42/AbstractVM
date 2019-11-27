@@ -45,10 +45,13 @@ int		main(int ac, char **av) {
 			if (avm.isVerbose()) {
 				std::cout << BOLD << "exec " << EOC << av[i] << ":" << std::endl;
 			}
-			if (Lexer.parseFromFile(av[i]))
-				avm.exec();
-			else
+			if (Lexer.parseFromFile(av[i])) {
 				Lexer.printErrors();
+				avm.exec();
+			}
+			else {
+				Lexer.printErrors();
+			}
 			avm.clearInstr();
 			Lexer.clearErrors();
 		}

@@ -52,7 +52,7 @@ bool Lexer::parseFromFile(std::string const &filename) {
 	std::ifstream file(filename);
     if (file.fail()) {
         std::cout << "Error: " << strerror(errno) << std::endl;
-        return 1;
+        return false;
     }
 
 	int i = 1;
@@ -98,6 +98,10 @@ bool Lexer::parseOneLine(std::string const &line, int lineNbr) {
 	}
 	if (str[0] == ';')
 		return true;  // comment
+
+	if (str.find(';') != std::string::npos) {  // remove inline comments
+		str = trim(str.substr(0, str.find(';')));
+	}
 
 	std::vector<std::string> words;
 	std::istringstream stream(str);

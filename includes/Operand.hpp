@@ -87,31 +87,31 @@ class Operand : public IOperand {
 			switch (op) {
 				case OP_ADD:
 					if (floatType)
-						dval = this->toDouble() + rhs.toDouble();
+						dval = rhs.toDouble() + this->toDouble();
 					else
-						ival = this->toInt64() + rhs.toInt64();
+						ival = rhs.toInt64() + this->toInt64();
 					break;
 				case OP_SUB:
 					if (floatType)
-						dval = this->toDouble() - rhs.toDouble();
+						dval = rhs.toDouble() - this->toDouble();
 					else
-						ival = this->toInt64() - rhs.toInt64();
+						ival = rhs.toInt64() - this->toInt64();
 					break;
 				case OP_MUL:
 					if (floatType)
-						dval = this->toDouble() * rhs.toDouble();
+						dval = rhs.toDouble() * this->toDouble();
 					else
-						ival = this->toInt64() * rhs.toInt64();
+						ival = rhs.toInt64() * this->toInt64();
 					break;
 				case OP_DIV:
 					if (floatType) {
-						if (rhs.toDouble() == 0)
+						if (this->toDouble() == 0)
 							throw DivByZeroError();
-						dval = this->toDouble() / rhs.toDouble();
+						dval = rhs.toDouble() / this->toDouble();
 					} else {
-						if (rhs.toInt64() == 0)
+						if (this->toInt64() == 0)
 							throw DivByZeroError();
-						ival = this->toInt64() / rhs.toInt64();
+						ival = rhs.toInt64() / this->toInt64();
 					}
 					break;
 				case OP_MOD:
@@ -120,7 +120,7 @@ class Operand : public IOperand {
 					} else {
 						if (rhs.toInt64() == 0)
 							throw DivByZeroError();
-						ival = this->toInt64() % rhs.toInt64();
+						ival = rhs.toInt64() % rhs.toInt64();
 					}
 					break;
 			}

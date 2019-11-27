@@ -158,7 +158,7 @@ void Avm::_execOneInstr(Instruction const *instr) {
 			break;
 		case InstrPrint:
 			_stackEmptyError(instr);
-			std::cout << _stack.top()->toChar() << std::endl;
+			std::cout << _stack.top()->toChar() << std::flush;
 			break;
 		case InstrExit:
 			_isExit = true;
