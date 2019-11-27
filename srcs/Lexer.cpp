@@ -130,11 +130,13 @@ bool Lexer::parseOneLine(std::string const &line, int lineNbr) {
 	}
 	if (isValidCommand == false) {
 		_errors.push_back(Error(lineNbr, line, std::string("invalid command: ") + command));
+		delete instr;
 		return false;
 	}
 	if (instr->instrType == InstrPush || instr->instrType == InstrAssert) {
 		if (words.size() == 0) {
 			_errors.push_back(Error(lineNbr, line, command + " need one argument"));
+			delete instr;
 			return false;
 		}
 		std::string arg;
@@ -144,6 +146,7 @@ bool Lexer::parseOneLine(std::string const &line, int lineNbr) {
 
 		if (arg[arg.size() - 1] != ')') {
 			_errors.push_back(Error(lineNbr, line, "invalid syntax"));
+			delete instr;
 			return false;
 		}
 		arg = arg.substr(0, arg.size()-1);
@@ -161,6 +164,7 @@ bool Lexer::parseOneLine(std::string const &line, int lineNbr) {
 		}
 		if (isValidType == false) {
 			_errors.push_back(Error(lineNbr, line, std::string("invalid type: ") + argType));
+			delete instr;
 			return false;
 		}
 
@@ -169,12 +173,21 @@ bool Lexer::parseOneLine(std::string const &line, int lineNbr) {
 
 	} else if (words.size() > 0) {
 		_errors.push_back(Error(lineNbr, line, command + " need no arguments"));
+		delete instr;
 		return false;
 	}
 
 	Parser parser;
-	if (parser.parseInstr(_avm, instr) == false)
+	try {
+		if (parser.parseInstr(_avm, instr) == false) {
+			delete instr;
+			return false;
+		}
+	}
+	catch (AvmError &e) {
+		delete instr;
 		return false;
+	}
 	return true;
 }
 

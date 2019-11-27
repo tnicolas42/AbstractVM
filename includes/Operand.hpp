@@ -118,9 +118,9 @@ class Operand : public IOperand {
 					if (floatType) {
 						throw ModOnDoubleError();
 					} else {
-						if (rhs.toInt64() == 0)
+						if (this->toInt64() == 0)
 							throw DivByZeroError();
-						ival = rhs.toInt64() % rhs.toInt64();
+						ival = rhs.toInt64() % this->toInt64();
 					}
 					break;
 			}
