@@ -42,8 +42,8 @@ void Avm::clearInstr() {
         _listInstr.pop();
 	}
     while (!_stack.empty()) {
-		delete _stack.top();
-        _stack.pop();
+		delete _stack.front();
+        _stack.pop_front();
 	}
 	_isExit = false;
 }
@@ -57,15 +57,8 @@ void Avm::_stackEmptyError(Instruction const *instr) {
 }
 
 void Avm::_execDump() {
-	std::stack<IOperand const *> tmp;
-	while (!_stack.empty()) {
-		std::cout << _stack.top()->toString() << std::endl;
-		tmp.push(_stack.top());
-		_stack.pop();
-	}
-	while (!tmp.empty()) {
-		_stack.push(tmp.top());
-		tmp.pop();
+	for (auto it = _stack.begin(); it != _stack.end(); it++) {
+		std::cout << (*it)->toString() << std::endl;
 	}
 }
 
@@ -74,9 +67,9 @@ void Avm::_execAssert(Instruction const *instr) {
 
 	IOperand const *cmp = createOperand(instr->operandType, instr->value);
 
-	if (!(*cmp == *_stack.top())) {
+	if (!(*cmp == *_stack.front())) {
 		std::cout << "AssertError: " << cmp->toString() << " is not egal to "
-			<< _stack.top()->toString() << std::endl;
+			<< _stack.front()->toString() << std::endl;
 		_isExit = true;
 	}
 
@@ -86,18 +79,18 @@ void Avm::_execAssert(Instruction const *instr) {
 void Avm::_execCalc(Instruction const * instr) {
 	_stackEmptyError(instr);
 
-	IOperand const * first = _stack.top();
-	_stack.pop();
+	IOperand const * first = _stack.front();
+	_stack.pop_front();
 
 	try {
 		_stackEmptyError(instr);
 	}
 	catch (StackEmptyError &e) {
-		_stack.push(first);
+		_stack.push_front(first);
 		throw StackEmptyError();
 	}
-	IOperand const * second = _stack.top();
-	_stack.pop();
+	IOperand const * second = _stack.front();
+	_stack.pop_front();
 
 	IOperand const * res;
 	try {
@@ -118,15 +111,15 @@ void Avm::_execCalc(Instruction const * instr) {
 				res = *first % *second;
 				break;
 			default:
-				_stack.push(second);
-				_stack.push(first);
+				_stack.push_front(second);
+				_stack.push_front(first);
 				throw InvalidInstructionError();
 				break;
 		}
 	}
 	catch (AvmError &e) {
-		_stack.push(second);
-		_stack.push(first);
+		_stack.push_front(second);
+		_stack.push_front(first);
 		if (_error == nullptr) {
 			_error = new Error(instr->lineNbr,
 				instr->lineStr,
@@ -136,19 +129,19 @@ void Avm::_execCalc(Instruction const * instr) {
 	}
 	delete first;
 	delete second;
-	_stack.push(res);
+	_stack.push_front(res);
 }
 
 
 void Avm::_execOneInstr(Instruction const *instr) {
 	switch (instr->instrType) {
 		case InstrPush:
-			_stack.push(createOperand(instr->operandType, instr->value));
+			_stack.push_front(createOperand(instr->operandType, instr->value));
 			break;
 		case InstrPop:
 			_stackEmptyError(instr);
-			delete _stack.top();
-			_stack.pop();
+			delete _stack.front();
+			_stack.pop_front();
 			break;
 		case InstrDump:
 			_execDump();
@@ -158,7 +151,7 @@ void Avm::_execOneInstr(Instruction const *instr) {
 			break;
 		case InstrPrint:
 			_stackEmptyError(instr);
-			std::cout << _stack.top()->toChar() << std::flush;
+			std::cout << _stack.front()->toChar() << std::flush;
 			break;
 		case InstrExit:
 			_isExit = true;

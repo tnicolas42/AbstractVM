@@ -3,7 +3,7 @@
 #include <string>
 #include <regex>
 #include <queue>
-#include <stack>
+#include <deque>
 #include <map>
 #include "Operand.hpp"
 #include "Exceptions.hpp"
@@ -71,7 +71,7 @@ class Avm {
 		bool	_isVerbose;
 
 		std::queue<Instruction const *>	_listInstr;
-		std::stack<IOperand const *> _stack;
+		std::deque<IOperand const *> _stack;
 
 		/* used in factory */
 		static std::map<eOperandType, createFunc> _createMap;
