@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <limits>
+#include <math.h>
 #include "IOperand.hpp"
 #include "Avm.hpp"
 #include "Exceptions.hpp"
@@ -116,7 +117,9 @@ class Operand : public IOperand {
 					break;
 				case OP_MOD:
 					if (floatType) {
-						throw ModOnDoubleError();
+						if (this->toInt64() == 0)
+							throw DivByZeroError();
+						dval = fmod(rhs.toDouble(), this->toDouble());
 					} else {
 						if (this->toInt64() == 0)
 							throw DivByZeroError();
