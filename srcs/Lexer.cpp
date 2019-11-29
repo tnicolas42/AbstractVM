@@ -16,6 +16,8 @@ const std::map<std::string, eInstr> Lexer::_instrMap = {
 	{"mod", InstrMod},
 	{"print", InstrPrint},
 	{"exit", InstrExit},
+	{"max", InstrMax},
+	{"min", InstrMin},
 };
 
 const std::map<std::string, eOperandType> Lexer::_typeMap = {

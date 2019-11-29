@@ -56,6 +56,42 @@ class Operand : public IOperand {
 			// int comparison
 			return toInt64() == rhs.toInt64();
 		}
+		bool operator>=(IOperand const & rhs) const {
+			eOperandType	retType = (getType() > rhs.getType()) ? getType() : rhs.getType();
+
+			if (retType >= Float) {  // float comparison
+				return toDouble() >= rhs.toDouble();
+			}
+			// int comparison
+			return toInt64() >= rhs.toInt64();
+		}
+		bool operator<=(IOperand const & rhs) const {
+			eOperandType	retType = (getType() > rhs.getType()) ? getType() : rhs.getType();
+
+			if (retType >= Float) {  // float comparison
+				return toDouble() <= rhs.toDouble();
+			}
+			// int comparison
+			return toInt64() <= rhs.toInt64();
+		}
+		bool operator>(IOperand const & rhs) const {
+			eOperandType	retType = (getType() > rhs.getType()) ? getType() : rhs.getType();
+
+			if (retType >= Float) {  // float comparison
+				return toDouble() > rhs.toDouble();
+			}
+			// int comparison
+			return toInt64() > rhs.toInt64();
+		}
+		bool operator<(IOperand const & rhs) const {
+			eOperandType	retType = (getType() > rhs.getType()) ? getType() : rhs.getType();
+
+			if (retType >= Float) {  // float comparison
+				return toDouble() < rhs.toDouble();
+			}
+			// int comparison
+			return toInt64() < rhs.toInt64();
+		}
 		std::string const toString() const {
 			return std::to_string(_value);
 		}

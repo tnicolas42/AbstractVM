@@ -76,6 +76,36 @@ void Avm::_execAssert(Instruction const *instr) {
 	delete cmp;
 }
 
+void Avm::_execMinMax(Instruction const *instr, std::string const &minMax) {
+	_stackEmptyError(instr);
+
+	IOperand const * op1 = _stack[0];
+	IOperand const * op2 = nullptr;
+	for (uint32_t i = 1; i < _stack.size(); i++) {
+		op2 = _stack[i];
+		if (minMax == "max") {
+			if (op2 > op1) {
+				delete op1;
+				op1 = op2;
+			}
+			else {
+				delete op2;
+			}
+		}
+		else {
+			if (op2 < op1) {
+				delete op1;
+				op1 = op2;
+			}
+			else {
+				delete op2;
+			}
+		}
+	}
+	_stack.clear();
+	_stack.push_front(op1);
+}
+
 void Avm::_execCalc(Instruction const * instr) {
 	_stackEmptyError(instr);
 
@@ -155,6 +185,12 @@ void Avm::_execOneInstr(Instruction const *instr) {
 			break;
 		case InstrExit:
 			_isExit = true;
+			break;
+		case InstrMax:
+			_execMinMax(instr, "max");
+			break;
+		case InstrMin:
+			_execMinMax(instr, "min");
 			break;
 		default:
 			_execCalc(instr);

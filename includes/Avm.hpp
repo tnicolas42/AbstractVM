@@ -22,6 +22,8 @@ enum eInstr {
 	InstrMod,
 	InstrPrint,
 	InstrExit,
+	InstrMax,
+	InstrMin,
 };
 
 class Avm {
@@ -80,6 +82,7 @@ class Avm {
 
 		void _execDump();
 		void _execAssert(Instruction const *instr);
+		void _execMinMax(Instruction const *instr, std::string const &minMax);
 		void _execCalc(Instruction const *instr);
 		void _execOneInstr(Instruction const *instr);
 };
