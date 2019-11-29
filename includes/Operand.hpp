@@ -1,9 +1,9 @@
 #pragma once
 
+#include <math.h>
 #include <string>
 #include <iostream>
 #include <limits>
-#include <math.h>
 #include "IOperand.hpp"
 #include "Avm.hpp"
 #include "Exceptions.hpp"

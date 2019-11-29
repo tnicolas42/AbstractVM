@@ -192,6 +192,12 @@ void Avm::_execOneInstr(Instruction const *instr) {
 		case InstrMin:
 			_execMinMax(instr, "min");
 			break;
+		case InstrPrintAll:
+			_stackEmptyError(instr);
+			for (auto it = _stack.begin(); it != _stack.end(); it++) {
+				std::cout << (*it)->toChar() << std::flush;
+			}
+			break;
 		default:
 			_execCalc(instr);
 			break;

@@ -24,6 +24,7 @@ enum eInstr {
 	InstrExit,
 	InstrMax,
 	InstrMin,
+	InstrPrintAll,
 };
 
 class Avm {
